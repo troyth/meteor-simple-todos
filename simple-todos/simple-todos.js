@@ -43,7 +43,6 @@ if (Meteor.isClient) {
       // Get value from form element
       var text = event.target.text.value;
 
-      console.log("add");
       // Insert a task into the collection
       Meteor.call("addTask", text);
 
@@ -70,7 +69,6 @@ if (Meteor.isClient) {
       Meteor.call("deleteTask", this._id);
     },
     "click .toggle-private": function () {
-      console.log('toggle-private clicked');
       Meteor.call("setPrivate", this._id, ! this.private);
     }
   });
@@ -78,50 +76,50 @@ if (Meteor.isClient) {
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
-
-  Meteor.methods({
-    addTask: function (text) {
-      console.log("got in");
-      // Make sure the user is logged in before inserting a task
-      if (! Meteor.userId()) {
-        throw new Meteor.Error("not-authorized");
-      }
-
-      Tasks.insert({
-        text: text,
-        createdAt: new Date(),
-        owner: Meteor.userId(),
-        username: Meteor.user().username
-      });
-      console.log("inserted");
-    },
-    deleteTask: function (taskId) {
-      var task = Tasks.findOne(taskId);
-      if (task.private && task.owner !== Meteor.userId()) {
-        // If the task is private, make sure only the owner can delete it
-        throw new Meteor.Error("not-authorized");
-      }
-
-      Tasks.remove(taskId);
-    },
-    setChecked: function (taskId, setChecked) {
-      var task = Tasks.findOne(taskId);
-      if (task.private && task.owner !== Meteor.userId()) {
-        // If the task is private, make sure only the owner can check it off
-        throw new Meteor.Error("not-authorized");
-      }
-
-      Tasks.update(taskId, { $set: { checked: setChecked} });
-    },
-    setPrivate: function (taskId, setToPrivate) {
-      var task = Tasks.findOne(taskId);
-
-      // Make sure only the task owner can make a task private
-      if (task.owner !== Meteor.userId()) {
-        throw new Meteor.Error("not-authorized");
-      }
-
-      Tasks.update(taskId, { $set: { private: setToPrivate } });
-    }
-  });
 }
+
+Meteor.methods({
+  addTask: function (text) {
+    // Make sure the user is logged in before inserting a task
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    Tasks.insert({
+      text: text,
+      createdAt: new Date(),
+      owner: Meteor.userId(),
+      username: Meteor.user().username
+    });
+  },
+  deleteTask: function (taskId) {
+    var task = Tasks.findOne(taskId);
+    if (task.private && task.owner !== Meteor.userId()) {
+      // If the task is private, make sure only the owner can delete it
+      throw new Meteor.Error("not-authorized");
+    }
+
+    Tasks.remove(taskId);
+  },
+  setChecked: function (taskId, setChecked) {
+    var task = Tasks.findOne(taskId);
+    if (task.private && task.owner !== Meteor.userId()) {
+      // If the task is private, make sure only the owner can check it off
+      throw new Meteor.Error("not-authorized");
+    }
+
+    Tasks.update(taskId, { $set: { checked: setChecked} });
+  },
+  setPrivate: function (taskId, setToPrivate) {
+    var task = Tasks.findOne(taskId);
+
+    // Make sure only the task owner can make a task private
+    if (task.owner !== Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    Tasks.update(taskId, { $set: { private: setToPrivate } });
+  }
+});
+Status API Training Shop Blog About Help
+© 2015 GitHub, Inc. Terms Privacy Security Contact
