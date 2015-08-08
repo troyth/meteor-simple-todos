@@ -1,7 +1,16 @@
 Tasks = new Mongo.Collection("tasks");
 
+if (Meteor.isServer) {
+  // This code only runs on the server
+  Meteor.publish("tasks", function () {
+    return Tasks.find();
+  });
+}
+
 if (Meteor.isClient) {
   // This code only runs on the client
+  Meteor.subscribe("tasks");
+  
   Template.body.helpers({
     tasks: function () {
       if (Session.get("hideCompleted")) {
@@ -28,6 +37,7 @@ if (Meteor.isClient) {
       // Get value from form element
       var text = event.target.text.value;
 
+      console.log("add");
       // Insert a task into the collection
       Meteor.call("addTask", text);
 
@@ -55,6 +65,7 @@ if (Meteor.isClient) {
 
   Meteor.methods({
     addTask: function (text) {
+      console.log("got in");
       // Make sure the user is logged in before inserting a task
       if (! Meteor.userId()) {
         throw new Meteor.Error("not-authorized");
@@ -66,6 +77,7 @@ if (Meteor.isClient) {
         owner: Meteor.userId(),
         username: Meteor.user().username
       });
+      console.log("inserted");
     },
     deleteTask: function (taskId) {
       Tasks.remove(taskId);
