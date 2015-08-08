@@ -121,5 +121,3 @@ Meteor.methods({
     Tasks.update(taskId, { $set: { private: setToPrivate } });
   }
 });
-Status API Training Shop Blog About Help
-© 2015 GitHub, Inc. Terms Privacy Security Contact
